@@ -13,8 +13,8 @@ from bs4 import BeautifulSoup
 
 
 __about__ = "https://github.com/MLBZ521/QuickScores.com-League-WebScrapper"
-__updated__ = "4/16/2023"
-__version__ = "1.0.0"
+__updated__ = "1/9/2024"
+__version__ = "1.0.1"
 
 
 def string_to_date_and_time(datetime_string: str, format_string: str = "%Y-%m-%dT%H:%M"):
@@ -58,7 +58,7 @@ def main():
 
 	# User Defined Variables
 	save_location = os.path.expanduser("~/Downloads")
-	quickscores_org ="chandleraz"
+	quickscores_org = "chandleraz"
 
 	# Define the address (location) for each field name
 	locations = {
@@ -209,15 +209,14 @@ def main():
 			weeks[-1].find(attrs={"class": "cell comment-only"}).find("p").string
 		):
 
-			date = datetime.strptime(
-				weeks[-1].find(attrs={"class": "e-date"}).string, "%b %d").strftime("%m/%d")
-			year = datetime.now().year
+			game_date = f"{weeks[-1].find(attrs={'class': 'e-date'}).string} {datetime.now().year}"
+			date = datetime.strptime(game_date, "%b %d %Y").strftime("%m/%d/%Y")
 
 			schedule.append({
 				"Subject": "Tournament",
-				"Start Date": f"{date}/{year}",
+				"Start Date": f"{date}",
 				"Start Time": "06:20 PM",
-				"End Date": f"{date}/{year}",
+				"End Date": f"{date}",
 				"End Time": "10:20 PM",
 				"All Day Event": "FALSE",
 				"Description": "Tournament bracket, game times, and fields \
