@@ -158,12 +158,32 @@ def main():
 		schedule = []
 
 		for week in weeks[:-1]:
-		# Get everything, except the fail week as this is typically
+		# Get everything, except the final week as this is typically
 		# the tournament night which does list specifics
 
-			date_time = week.find(attrs={"class": "e-time local-info"}).get("datetime")
+			# Check if there is a "Bye Week"
+			if week.find(attrs={"class": "bye"}):
+				time_info = week.find(attrs={"class": "e-date"})
+				date, _ = string_to_date_and_time(
+					f"{time_info.string} {datetime.now().year}", "%b %d %Y")
+				schedule.append({
+					"Subject": "Bye Week",
+					"Start Date": f"{date}",
+					"Start Time": "06:20 PM",
+					"End Date": f"{date}",
+					"End Time": "10:20 PM",
+					"All Day Event": "FALSE",
+					"Description": "Bye week, no games!",
+					"Location": "",
+					"Private": "default",
+				})
+				continue
+
+			time_info = week.find(attrs={"class": "e-time local-info"})
+			date_time = time_info.get("datetime")
 			date, g1_start_time = string_to_date_and_time(date_time)
-			field = week.find(title="Click for directions").string
+			field = week.find(attrs={"class": "e-local local-info"})
+			field = field.find(title="Click for directions").string
 			g1_end_g2_start_time, g2_end_time = game_times(g1_start_time)
 
 			# Determine which team is home/away for the first game
